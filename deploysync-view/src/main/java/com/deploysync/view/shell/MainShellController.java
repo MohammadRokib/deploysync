@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.StackPane;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,9 @@ public class MainShellController {
         moduleList.getItems().add(EAR_DEPLOYMENT_MODULE);
         moduleList.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldModule, newModule) -> showModule(newModule));
+
+        SplitPane splitPane = (SplitPane) moduleList.getParent();
+        SplitPane.setResizableWithParent(moduleList, false);
     }
 
     private void showModule(String moduleName) {
