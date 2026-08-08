@@ -7,9 +7,11 @@ import java.nio.file.Path;
 @Service
 public class EarDeploymentService {
     private final DeploymentValidator deploymentValidator;
+    private final DeploymentPatcher deploymentPatcher;
 
-    public  EarDeploymentService(DeploymentValidator deploymentValidator) {
+    public  EarDeploymentService(DeploymentValidator deploymentValidator, DeploymentPatcher deploymentPatcher) {
         this.deploymentValidator = deploymentValidator;
+        this.deploymentPatcher = deploymentPatcher;
     }
 
     public DeploymentResult deploy(Path masterEarFile, Path deploymentFolder) {
@@ -18,6 +20,6 @@ public class EarDeploymentService {
             return new DeploymentResult(false, "Validation failed:\n" + String.join("\n", validation.errors()));
         }
 
-        return new DeploymentResult(true, "Validation passed: " + validation.entries().size() + " file(s) ready to deploy.");
+        return deploymentPatcher.patch(masterEarFile, validation.filesFolder(), validation.entries());
     }
 }
