@@ -53,7 +53,7 @@ public class DeploymentValidator {
 
         validateNoOrphanFiles(entries, filesFolder, errors);
 
-        return errors.isEmpty() ? DeploymentValidationResult.success(entries)
+        return errors.isEmpty() ? DeploymentValidationResult.success(entries, filesFolder)
                                 : DeploymentValidationResult.failure(errors);
     }
 
