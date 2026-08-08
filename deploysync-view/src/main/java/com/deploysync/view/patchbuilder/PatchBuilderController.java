@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeView;
@@ -47,29 +48,42 @@ public class PatchBuilderController {
         selectedFilesList.setItems(selectedFiles);
         selectedFilesList.setCellFactory(list -> new SelectedFileCell());
 
-        archiveTree.setCellFactory(tree -> new TreeCell<>() {
-            @Override
-            protected void updateItem(ArchiveNode item, boolean empty) {
-                super.updateItem(item, empty);
-                textProperty().unbind();
+        archiveTree.setCellFactory(tree -> {
+            TreeCell<ArchiveNode> cell = new TreeCell<>() {
+                @Override
+                protected void updateItem(ArchiveNode item, boolean empty) {
+                    super.updateItem(item, empty);
+                    textProperty().unbind();
 
-                if (empty || item == null) {
-                    setText(null);
-                } else if (item.directory() || item.archive()) {
-                    textProperty().bind(Bindings.when(getTreeItem().expandedProperty())
-                            .then(item.name())
-                            .otherwise(item.name() + "/"));
-                } else {
-                    setText(item.name());
+                    if (empty || item == null) {
+                        setText(null);
+                    } else if (item.directory() || item.archive()) {
+                        textProperty().bind(Bindings.when(getTreeItem().expandedProperty())
+                                .then(item.name())
+                                .otherwise(item.name() + "/"));
+                    } else {
+                        setText(item.name());
+                    }
                 }
-            }
-        });
+            };
 
-        archiveTree.getSelectionModel().selectedItemProperty().addListener((obs, oldItem, newItem) -> {
-            if (newItem == null || newItem.getValue().directory()) {
-                return;
-            }
-            addSelection(newItem.getValue());
+            cell.setOnMouseClicked(event -> {
+                Node disclosureNode = cell.getDisclosureNode();
+
+                if (cell.isEmpty() || cell.getItem() == null) {
+                    return;
+                }
+
+                if (disclosureNode != null && disclosureNode.getBoundsInParent().contains(event.getX(), event.getY())) {
+                    return;
+                }
+
+                if (!cell.getItem().directory()) {
+                    addSelection(cell.getItem());
+                }
+            });
+
+            return cell;
         });
     }
 
