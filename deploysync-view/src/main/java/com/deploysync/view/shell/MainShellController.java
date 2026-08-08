@@ -16,6 +16,7 @@ import java.io.IOException;
 @Component
 public class MainShellController {
     private static final String EAR_DEPLOYMENT_MODULE = "EAR Deployment";
+    private static final String PATCH_MANAGEMENT_MODULE = "Patch Management";
     private final SpringFxmlLoader fxmlLoader;
 
     @FXML private ListView<String> moduleList;
@@ -27,7 +28,7 @@ public class MainShellController {
 
     @FXML
     private void initialize() {
-        moduleList.getItems().add(EAR_DEPLOYMENT_MODULE);
+        moduleList.getItems().addAll(EAR_DEPLOYMENT_MODULE, PATCH_MANAGEMENT_MODULE);
         moduleList.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldModule, newModule) -> showModule(newModule));
 
@@ -38,6 +39,7 @@ public class MainShellController {
     private void showModule(String moduleName) {
         String resourcePath = switch (moduleName) {
             case EAR_DEPLOYMENT_MODULE -> "/com/deploysync/view/eardeployment/EarDeployment.fxml";
+            case PATCH_MANAGEMENT_MODULE -> "/com/deploysync/view/patchbuilder/PatchBuilder.fxml";
             default -> throw new IllegalArgumentException("Unknown module: " + moduleName);
         };
 

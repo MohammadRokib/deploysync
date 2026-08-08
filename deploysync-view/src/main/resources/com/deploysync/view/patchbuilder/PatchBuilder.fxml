@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.deploysync.view.patchbuilder.PatchBuilderController"
+            prefWidth="750" prefHeight="500">
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="20"/>
+            </padding>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="masterFileField" promptText="Select master file" HBox.hgrow="ALWAYS"/>
+                <Button text="Select" onAction="#onSelectMasterFile"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="openButton" text="Open" onAction="#onOpen"/>
+                <Button fx:id="extractButton" text="Extract" onAction="#onExtract"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.7">
+            <items>
+                <TreeView fx:id="archiveTree" minWidth="200" showRoot="true"/>
+                <ListView fx:id="selectedFilesList" minWidth="150"/>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>
