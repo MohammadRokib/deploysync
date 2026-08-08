@@ -65,7 +65,8 @@ public class EarDeploymentController {
         Path deploymentFolder = Path.of(deploymentFolderField.getText());
 
         DeploymentResult result = earDeploymentService.deploy(masterEar, deploymentFolder);
-        statusLabel.setText(result.message());
+        statusLabel.setText((result.success() ? "Success!\n" : "Failed!\n") + result.message());
+        statusLabel.setStyle(result.success() ? "-fx-text-fill: #2e7d32;" : "-fx-text-fill: #c62828;");
     }
 
     private Window windowOf(TextField field) {
