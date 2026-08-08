@@ -4,6 +4,7 @@ import com.deploysync.model.eardeployment.DeploymentResult;
 import com.deploysync.model.eardeployment.ManifestEntry;
 import com.deploysync.model.patchbuilder.ArchiveNode;
 import com.deploysync.model.patchbuilder.PatchBuilderService;
+import com.deploysync.view.support.Popups;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -93,7 +94,7 @@ public class PatchBuilderController {
 
         Path selected = Path.of(text);
         if (!Files.isRegularFile(selected)) {
-            showError("File not found", selected + " does not exist.");
+            Popups.showError("File not found", selected + " does not exist.");
             return;
         }
 
@@ -102,7 +103,7 @@ public class PatchBuilderController {
         try {
             root.getChildren();
         } catch (UncheckedIOException e) {
-            showError("Failed to open file", e.getCause().getMessage());
+            Popups.showError("Failed to open file", e.getCause().getMessage());
             return;
         }
 
@@ -123,8 +124,10 @@ public class PatchBuilderController {
         }
 
         DeploymentResult result = patchBuilderService.extract(masterFile, List.copyOf(selectedFiles), selected.toPath());
-        if (!result.success()) {
-            showError("Extraction failed", result.message());
+        Popups.showResult("Extraction succeed", "Extraction failed", result.success(), result.message());
+
+        if (result.success()) {
+            selectedFiles.clear();
         }
     }
 
@@ -137,14 +140,6 @@ public class PatchBuilderController {
         if (selectedFiles.stream().noneMatch(existing -> existing.equals(entry))) {
             selectedFiles.add(entry);
         }
-    }
-
-    private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(title);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private Window windowOf(TextField field) {
