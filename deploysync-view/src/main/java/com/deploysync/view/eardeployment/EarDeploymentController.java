@@ -71,16 +71,23 @@ public class EarDeploymentController {
         Path deploymentFolder = Path.of(deploymentFolderField.getText());
 
         statusLabel.setText("Deploying...");
-        progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+        progressBar.setProgress(0);
         progressBar.setVisible(true);
         progressBar.setManaged(true);
+        deploying.set(true);
 
         Task<DeploymentResult> task = new Task<>() {
             @Override
             protected DeploymentResult call() {
-                return earDeploymentService.deploy(masterEar, deploymentFolder);
+                return earDeploymentService.deploy(masterEar, deploymentFolder, (completed, total) -> {
+                    updateProgress(completed, total);
+                    updateMessage("Patching " + completed + " / " + total + " file(s)...");
+                });
             }
         };
+
+        progressBar.progressProperty().bind(task.progressProperty());
+        statusLabel.textProperty().bind(task.messageProperty());
 
         task.setOnSucceeded(e -> finishDeploy(task.getValue()));
         task.setOnFailed(e -> {

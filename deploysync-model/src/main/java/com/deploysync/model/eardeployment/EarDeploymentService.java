@@ -3,6 +3,7 @@ package com.deploysync.model.eardeployment;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.util.function.BiConsumer;
 
 @Service
 public class EarDeploymentService {
@@ -14,12 +15,12 @@ public class EarDeploymentService {
         this.deploymentPatcher = deploymentPatcher;
     }
 
-    public DeploymentResult deploy(Path masterEarFile, Path deploymentFolder) {
+    public DeploymentResult deploy(Path masterEarFile, Path deploymentFolder, BiConsumer<Integer, Integer> onProgress) {
         DeploymentValidationResult validation = deploymentValidator.validate(deploymentFolder, masterEarFile);
         if (!validation.valid()) {
             return new DeploymentResult(false, "Validation failed:\n" + String.join("\n", validation.errors()));
         }
 
-        return deploymentPatcher.patch(masterEarFile, validation.filesFolder(), validation.entries());
+        return deploymentPatcher.patch(masterEarFile, validation.filesFolder(), validation.entries(), onProgress);
     }
 }

@@ -12,15 +12,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Service
 public class DeploymentPatcher {
-    public DeploymentResult patch(Path masterEarFile, Path filesFolder, List<ManifestEntry> entries) {
+    public DeploymentResult patch(Path masterEarFile, Path filesFolder, List<ManifestEntry> entries,
+                                  BiConsumer<Integer, Integer> onProgress) {
         Path workingCopy = masterEarFile.resolveSibling(masterEarFile.getFileName() + ".working");
 
         try {
             Files.copy(masterEarFile, workingCopy, StandardCopyOption.REPLACE_EXISTING);
 
+            int completed = 0;
             for (ManifestEntry entry : entries) {
                 byte[] sourceBytes = Files.readAllBytes(filesFolder.resolve(entry.source()));
                 List<String> segments = NestedArchivePathResolver.resolveEntrySegments(entry.target(), entry.source());
@@ -33,6 +36,9 @@ public class DeploymentPatcher {
                     return new DeploymentResult(false,
                             "Hash mismatch after patching '" + entry.target() + "' - deployment aborted, live file untouched.");
                 }
+
+                completed++;
+                onProgress.accept(completed, entries.size());
             }
 
             Path backupDir = masterEarFile.getParent().resolve(
