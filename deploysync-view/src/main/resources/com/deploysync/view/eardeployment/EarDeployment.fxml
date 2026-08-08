@@ -27,4 +27,5 @@
 
     <Button fx:id="deployButton" text="Deploy" onAction="#onDeploy"/>
     <Label fx:id="statusLabel" wrapText="true"/>
+    <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false" />
 </VBox>
