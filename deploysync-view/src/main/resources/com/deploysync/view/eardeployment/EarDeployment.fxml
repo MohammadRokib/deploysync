@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.deploysync.view.eardeployment.EarDeploymentController"
+      spacing="12" prefWidth="600" prefHeight="220">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <GridPane hgap="10" vgap="12">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS"/>
+            <ColumnConstraints minWidth="90"/>
+        </columnConstraints>
+
+        <TextField fx:id="masterEarField" promptText="Master .ear file" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Button text="Browse…" onAction="#onBrowseMasterEar" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <TextField fx:id="deploymentFolderField" promptText="New deployment files folder" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Button text="Browse…" onAction="#onBrowseDeploymentFolder" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <Button fx:id="deployButton" text="Deploy" onAction="#onDeploy"/>
+    <Label fx:id="statusLabel" wrapText="true"/>
+    <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false" />
+</VBox>

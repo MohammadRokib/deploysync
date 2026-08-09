@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.SplitPane?>
+
+<SplitPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.deploysync.view.shell.MainShellController"
+           prefWidth="700" prefHeight="400"
+           dividerPositions="0.25">
+    <items>
+        <ListView fx:id="moduleList" minWidth="120" maxWidth="400"/>
+        <StackPane fx:id="contentPane" minWidth="300"/>
+    </items>
+</SplitPane>
