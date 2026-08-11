@@ -13,8 +13,12 @@
                 <Insets top="20" right="20" bottom="10" left="20"/>
             </padding>
             <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="extractionFolderField" promptText="Select extraction folder" HBox.hgrow="ALWAYS"/>
+                <Button text="Browse..." onAction="#onSelectExtractionFolder"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
                 <TextField fx:id="masterFileField" promptText="Select master file" HBox.hgrow="ALWAYS"/>
-                <Button text="Select" onAction="#onSelectMasterFile"/>
+                <Button text="Browse..." onAction="#onSelectMasterFile"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER_RIGHT">
                 <Button fx:id="openButton" text="Open" onAction="#onOpen"/>

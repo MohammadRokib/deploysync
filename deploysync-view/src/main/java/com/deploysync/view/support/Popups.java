@@ -8,6 +8,7 @@ public final class Popups {
     public static void showResult(String successHeader, String failureHeader, boolean success, String message) {
         Alert alert = new Alert(success ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);
         alert.setTitle(success ? successHeader : failureHeader);
+        alert.setHeaderText(success ? successHeader : failureHeader);
         alert.setContentText(message);
         alert.showAndWait();
     }

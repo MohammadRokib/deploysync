@@ -32,8 +32,11 @@ public class PatchBuilderController {
     private Path masterFile;
 
     @FXML private TextField masterFileField;
+    @FXML private TextField extractionFolderField;
+
     @FXML private Button openButton;
     @FXML private Button extractButton;
+
     @FXML private TreeView<ArchiveNode> archiveTree;
     @FXML private ListView<ManifestEntry> selectedFilesList;
 
@@ -43,7 +46,14 @@ public class PatchBuilderController {
 
     @FXML
     private void initialize() {
-        extractButton.disableProperty().bind(Bindings.isEmpty(selectedFiles));
+        openButton.disableProperty().bind(
+                extractionFolderField.textProperty().isEmpty()
+                        .or(masterFileField.textProperty().isEmpty()));
+
+        extractButton.disableProperty().bind(
+                Bindings.isEmpty(selectedFiles)
+                        .or(extractionFolderField.textProperty().isEmpty())
+                        .or(masterFileField.textProperty().isEmpty()));
 
         selectedFilesList.setItems(selectedFiles);
         selectedFilesList.setCellFactory(list -> new SelectedFileCell());
@@ -100,6 +110,17 @@ public class PatchBuilderController {
     }
 
     @FXML
+    private void onSelectExtractionFolder() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select extraction folder");
+
+        File selected = chooser.showDialog(windowOf(extractionFolderField));
+        if (selected != null) {
+            extractionFolderField.setText(selected.getAbsolutePath());
+        }
+    }
+
+    @FXML
     private void onOpen() {
         String text = masterFileField.getText();
         if (text == null || text.isBlank()) {
@@ -129,15 +150,9 @@ public class PatchBuilderController {
 
     @FXML
     private void onExtract() {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select destination folder");
+        Path destinationFolder = Path.of(extractionFolderField.getText());
 
-        File selected = chooser.showDialog(windowOf(masterFileField));
-        if (selected == null) {
-            return;
-        }
-
-        DeploymentResult result = patchBuilderService.extract(masterFile, List.copyOf(selectedFiles), selected.toPath());
+        DeploymentResult result = patchBuilderService.extract(masterFile, List.copyOf(selectedFiles), destinationFolder);
         Popups.showResult("Extraction succeed", "Extraction failed", result.success(), result.message());
 
         if (result.success()) {
