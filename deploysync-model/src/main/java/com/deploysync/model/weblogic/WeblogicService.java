@@ -17,9 +17,11 @@ import java.util.Base64;
 @Service
 public class WeblogicService {
     private static final int MAX_ERROR_LENGTH = 300;
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(30);
+    private static final Duration REDEPLOY_TIMEOUT = Duration.ofMinutes(5);
 
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(REDEPLOY_TIMEOUT)
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,7 +71,7 @@ public class WeblogicService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
-                .timeout(Duration.ofSeconds(30))
+                .timeout(DEFAULT_TIMEOUT)
                 .header("Authorization", "Basic " + basicAuth)
                 .header("X-Requested-By", "automation")
                 .header("Accept", "application/json")
