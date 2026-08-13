@@ -1,11 +1,9 @@
 package com.deploysync.view.shell;
 
-import com.deploysync.model.eardeployment.EarDeploymentService;
 import com.deploysync.view.support.SpringFxmlLoader;
 import javafx.fxml.FXML;
 
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.StackPane;

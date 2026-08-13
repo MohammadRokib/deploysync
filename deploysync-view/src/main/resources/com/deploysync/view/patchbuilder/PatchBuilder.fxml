@@ -24,6 +24,8 @@
                 <Button fx:id="openButton" text="Open" onAction="#onOpen"/>
                 <Button fx:id="extractButton" text="Extract" onAction="#onExtract"/>
             </HBox>
+            <Label fx:id="statusLabel" wrapText="true"/>
+            <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
         </VBox>
     </top>
     <center>
