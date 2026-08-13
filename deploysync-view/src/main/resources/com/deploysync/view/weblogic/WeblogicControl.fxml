@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.deploysync.view.weblogic.WeblogicControlController"
+      spacing="12" prefWidth="600" prefHeight="380">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints minWidth="130"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="Host / IP" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="hostField" promptText="e.g. 192.168.10.33" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Port" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="portField" promptText="e.g. 7001" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Username" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="usernameField" promptText="e.g. weblogic" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Password" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="passwordField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Application Name" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="appNameField" promptText="e.g. CapitaHyper" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Target Server" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="targetField" promptText="e.g. AdminServer" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="checkConnectionButton" text="Check Connection" onAction="#onCheckConnection"/>
+        <Button fx:id="stopButton" text="Stop" onAction="#onStop"/>
+        <Button fx:id="startButton" text="Start" onAction="#onStart"/>
+        <Button fx:id="updateButton" text="Update" onAction="#onUpdate"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" wrapText="true"/>
+    <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+</VBox>

@@ -6,8 +6,10 @@ import com.deploysync.model.patchbuilder.ArchiveNode;
 import com.deploysync.model.patchbuilder.PatchBuilderService;
 import com.deploysync.view.support.Popups;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -20,20 +22,29 @@ import javafx.stage.Window;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 public class PatchBuilderController {
     private final PatchBuilderService patchBuilderService;
+    private final SimpleBooleanProperty extracting = new SimpleBooleanProperty(false);
     private final ObservableList<ManifestEntry> selectedFiles = FXCollections.observableArrayList();
     private Path masterFile;
 
     @FXML private TextField masterFileField;
+    @FXML private TextField extractionFolderField;
+
     @FXML private Button openButton;
     @FXML private Button extractButton;
+
+    @FXML private Label statusLabel;
+    @FXML private ProgressBar progressBar;
+
     @FXML private TreeView<ArchiveNode> archiveTree;
     @FXML private ListView<ManifestEntry> selectedFilesList;
 
@@ -43,7 +54,18 @@ public class PatchBuilderController {
 
     @FXML
     private void initialize() {
-        extractButton.disableProperty().bind(Bindings.isEmpty(selectedFiles));
+        progressBar.setVisible(false);
+        progressBar.setManaged(false);
+
+        openButton.disableProperty().bind(
+                extractionFolderField.textProperty().isEmpty()
+                        .or(masterFileField.textProperty().isEmpty()));
+
+        extractButton.disableProperty().bind(
+                Bindings.isEmpty(selectedFiles)
+                        .or(extractionFolderField.textProperty().isEmpty())
+                        .or(masterFileField.textProperty().isEmpty())
+                        .or(extracting));
 
         selectedFilesList.setItems(selectedFiles);
         selectedFilesList.setCellFactory(list -> new SelectedFileCell());
@@ -100,6 +122,29 @@ public class PatchBuilderController {
     }
 
     @FXML
+    private void onSelectExtractionFolder() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select extraction folder");
+
+        File selected = chooser.showDialog(windowOf(extractionFolderField));
+        if (selected == null) {
+            return;
+        }
+
+        try (Stream<Path> entries = Files.list(selected.toPath())) {
+            if (entries.findAny().isPresent()) {
+                Popups.showError("Folder not empty", "Selected directory is not empty");
+                return;
+            }
+        } catch (IOException e) {
+            Popups.showError("Failed to read folder", e.getMessage());
+            return;
+        }
+
+        extractionFolderField.setText(selected.getAbsolutePath());
+    }
+
+    @FXML
     private void onOpen() {
         String text = masterFileField.getText();
         if (text == null || text.isBlank()) {
@@ -129,15 +174,47 @@ public class PatchBuilderController {
 
     @FXML
     private void onExtract() {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Select destination folder");
+        Path destinationFolder = Path.of(extractionFolderField.getText());
+        List<ManifestEntry> entries = List.copyOf(selectedFiles);
 
-        File selected = chooser.showDialog(windowOf(masterFileField));
-        if (selected == null) {
-            return;
-        }
+        statusLabel.setText("Extracting...");
+        progressBar.setProgress(0);
+        progressBar.setVisible(true);
+        progressBar.setManaged(true);
+        extracting.set(true);
 
-        DeploymentResult result = patchBuilderService.extract(masterFile, List.copyOf(selectedFiles), selected.toPath());
+        Task<DeploymentResult> task = new Task<>() {
+            @Override
+            protected DeploymentResult call() {
+                return patchBuilderService.extract(masterFile, entries, destinationFolder, (completed, total) -> {
+                    updateProgress(completed, total);
+                    updateMessage("Extracting " + completed + " / " + total + " file(s)...");
+                });
+            }
+        };
+
+        progressBar.progressProperty().bind(task.progressProperty());
+        statusLabel.textProperty().bind(task.messageProperty());
+
+        task.setOnSucceeded(e -> finishExtraction(task.getValue()));
+        task.setOnFailed(e -> {
+            Throwable ex = task.getException();
+            finishExtraction(new DeploymentResult(false, "Unexpected error: " + (ex != null ? ex.getMessage() : "unknown")));
+        });
+
+        Thread thread = new Thread(task, "extract-worker");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void finishExtraction(DeploymentResult result) {
+        progressBar.progressProperty().unbind();
+        statusLabel.textProperty().unbind();
+        progressBar.setVisible(false);
+        progressBar.setManaged(false);
+        statusLabel.setText("");
+        extracting.set(false);
+
         Popups.showResult("Extraction succeed", "Extraction failed", result.success(), result.message());
 
         if (result.success()) {

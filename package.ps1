@@ -4,7 +4,7 @@ $appModule  = "deploysync-app"
 $mainJar    = "deploysync-app-1.0-SNAPSHOT.jar"
 $mainClass  = "com.deploysync.app.Launcher"
 $appName    = "DeploySync"
-$appVersion = "1.0.0"
+$appVersion = "1.1.0"
 
 $inputDir   = "$appModule\target\app-image-input"
 $runtimeDir = "$appModule\target\runtime"

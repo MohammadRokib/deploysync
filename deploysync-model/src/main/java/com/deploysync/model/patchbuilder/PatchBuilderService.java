@@ -11,12 +11,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Service
 public class PatchBuilderService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public DeploymentResult extract(Path masterFile, List<ManifestEntry> entries, Path destinationFolder) {
+    public DeploymentResult extract(Path masterFile, List<ManifestEntry> entries, Path destinationFolder,
+                                    BiConsumer<Integer, Integer> onProgress) {
         if (entries.isEmpty()) {
             return new DeploymentResult(false, "No files selected.");
         }
@@ -25,10 +27,14 @@ public class PatchBuilderService {
             Path filesFolder = destinationFolder.resolve("files");
             Files.createDirectories(filesFolder);
 
+            int completed = 0;
             for (ManifestEntry entry : entries) {
                 List<String> segments = NestedArchivePathResolver.resolveEntrySegments(entry.target(), entry.source());
                 byte[] content = NestedArchivePatcher.readEntry(masterFile, segments);
                 Files.write(filesFolder.resolve(entry.source()), content);
+
+                completed++;
+                onProgress.accept(completed, entries.size());
             }
 
             Path manifestFile = destinationFolder.resolve("manifest.json");

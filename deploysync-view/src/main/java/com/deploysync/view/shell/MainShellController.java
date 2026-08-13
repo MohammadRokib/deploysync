@@ -1,11 +1,9 @@
 package com.deploysync.view.shell;
 
-import com.deploysync.model.eardeployment.EarDeploymentService;
 import com.deploysync.view.support.SpringFxmlLoader;
 import javafx.fxml.FXML;
 
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.StackPane;
@@ -17,6 +15,7 @@ import java.io.IOException;
 public class MainShellController {
     private static final String EAR_DEPLOYMENT_MODULE = "EAR Deployment";
     private static final String PATCH_MANAGEMENT_MODULE = "Patch Management";
+    private static final String WEBLOGIC_CONTROL_MODULE = "WebLogic Control";
     private final SpringFxmlLoader fxmlLoader;
 
     @FXML private ListView<String> moduleList;
@@ -28,7 +27,7 @@ public class MainShellController {
 
     @FXML
     private void initialize() {
-        moduleList.getItems().addAll(EAR_DEPLOYMENT_MODULE, PATCH_MANAGEMENT_MODULE);
+        moduleList.getItems().addAll(EAR_DEPLOYMENT_MODULE, PATCH_MANAGEMENT_MODULE, WEBLOGIC_CONTROL_MODULE);
         moduleList.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldModule, newModule) -> showModule(newModule));
 
@@ -40,6 +39,7 @@ public class MainShellController {
         String resourcePath = switch (moduleName) {
             case EAR_DEPLOYMENT_MODULE -> "/com/deploysync/view/eardeployment/EarDeployment.fxml";
             case PATCH_MANAGEMENT_MODULE -> "/com/deploysync/view/patchbuilder/PatchBuilder.fxml";
+            case WEBLOGIC_CONTROL_MODULE -> "/com/deploysync/view/weblogic/WeblogicControl.fxml";
             default -> throw new IllegalArgumentException("Unknown module: " + moduleName);
         };
 
