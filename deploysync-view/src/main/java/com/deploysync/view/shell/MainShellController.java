@@ -10,24 +10,28 @@ import javafx.scene.layout.StackPane;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class MainShellController {
-    private static final String EAR_DEPLOYMENT_MODULE = "EAR Deployment";
-    private static final String PATCH_MANAGEMENT_MODULE = "Patch Management";
-    private static final String WEBLOGIC_CONTROL_MODULE = "WebLogic Control";
     private final SpringFxmlLoader fxmlLoader;
+    private final Map<String, String> resourceByModule = new LinkedHashMap<>();
 
     @FXML private ListView<String> moduleList;
     @FXML private StackPane contentPane;
 
-    public MainShellController(SpringFxmlLoader fxmlLoader) {
+    public MainShellController(SpringFxmlLoader fxmlLoader, List<ShellModule> modules) {
         this.fxmlLoader = fxmlLoader;
+        for (ShellModule module : modules) {
+            resourceByModule.put(module.displayName(), module.fxmlResourcePath());
+        }
     }
 
     @FXML
     private void initialize() {
-        moduleList.getItems().addAll(EAR_DEPLOYMENT_MODULE, PATCH_MANAGEMENT_MODULE, WEBLOGIC_CONTROL_MODULE);
+        moduleList.getItems().addAll(resourceByModule.keySet());
         moduleList.getSelectionModel().selectedItemProperty()
                 .addListener((obs, oldModule, newModule) -> showModule(newModule));
 
@@ -36,12 +40,10 @@ public class MainShellController {
     }
 
     private void showModule(String moduleName) {
-        String resourcePath = switch (moduleName) {
-            case EAR_DEPLOYMENT_MODULE -> "/com/deploysync/view/eardeployment/EarDeployment.fxml";
-            case PATCH_MANAGEMENT_MODULE -> "/com/deploysync/view/patchbuilder/PatchBuilder.fxml";
-            case WEBLOGIC_CONTROL_MODULE -> "/com/deploysync/view/weblogic/WeblogicControl.fxml";
-            default -> throw new IllegalArgumentException("Unknown module: " + moduleName);
-        };
+        String resourcePath = resourceByModule.get(moduleName);
+        if (resourcePath == null) {
+            throw new IllegalArgumentException("Unknown module: " + moduleName);
+        }
 
         try {
             Parent view = fxmlLoader.load(resourcePath);

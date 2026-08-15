@@ -4,6 +4,7 @@ import com.deploysync.model.eardeployment.DeploymentResult;
 import com.deploysync.model.eardeployment.ManifestEntry;
 import com.deploysync.model.patchbuilder.ArchiveNode;
 import com.deploysync.model.patchbuilder.PatchBuilderService;
+import com.deploysync.view.shell.ShellModule;
 import com.deploysync.view.support.Popups;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Component
-public class PatchBuilderController {
+public class PatchBuilderController implements ShellModule {
     private final PatchBuilderService patchBuilderService;
     private final SimpleBooleanProperty extracting = new SimpleBooleanProperty(false);
     private final ObservableList<ManifestEntry> selectedFiles = FXCollections.observableArrayList();
@@ -51,6 +52,9 @@ public class PatchBuilderController {
     public PatchBuilderController(PatchBuilderService patchBuilderService) {
         this.patchBuilderService = patchBuilderService;
     }
+
+    @Override public String displayName() { return "Patch Management"; }
+    @Override public String fxmlResourcePath() { return "/com/deploysync/view/patchbuilder/PatchBuilder.fxml"; }
 
     @FXML
     private void initialize() {

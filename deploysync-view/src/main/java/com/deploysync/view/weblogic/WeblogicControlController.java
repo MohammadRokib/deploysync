@@ -3,6 +3,7 @@ package com.deploysync.view.weblogic;
 import com.deploysync.model.eardeployment.DeploymentResult;
 import com.deploysync.model.weblogic.WeblogicConnection;
 import com.deploysync.model.weblogic.WeblogicService;
+import com.deploysync.view.shell.ShellModule;
 import com.deploysync.view.support.Popups;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
 @Component
-public class WeblogicControlController {
+public class WeblogicControlController implements ShellModule {
     private final WeblogicService weblogicService;
     private final SimpleBooleanProperty busy = new SimpleBooleanProperty(false);
 
@@ -37,6 +38,9 @@ public class WeblogicControlController {
     public WeblogicControlController(WeblogicService weblogicService) {
         this.weblogicService = weblogicService;
     }
+
+    @Override public String displayName() { return "WebLogic Control"; }
+    @Override public String fxmlResourcePath() { return "/com/deploysync/view/weblogic/WeblogicControl.fxml"; }
 
     @FXML
     private void initialize() {

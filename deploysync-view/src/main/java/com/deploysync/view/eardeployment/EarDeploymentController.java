@@ -2,6 +2,7 @@ package com.deploysync.view.eardeployment;
 
 import com.deploysync.model.eardeployment.DeploymentResult;
 import com.deploysync.model.eardeployment.EarDeploymentService;
+import com.deploysync.view.shell.ShellModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -16,7 +17,7 @@ import java.nio.file.Path;
 
 
 @Component
-public class EarDeploymentController {
+public class EarDeploymentController implements ShellModule {
     private final EarDeploymentService earDeploymentService;
     private final SimpleBooleanProperty deploying = new SimpleBooleanProperty(false);
 
@@ -29,6 +30,9 @@ public class EarDeploymentController {
     public EarDeploymentController(EarDeploymentService earDeploymentService) {
         this.earDeploymentService = earDeploymentService;
     }
+
+    @Override public String displayName() { return "EAR Deployment"; }
+    @Override public String fxmlResourcePath() { return "/com/deploysync/view/eardeployment/EarDeployment.fxml"; }
 
     @FXML
     private void initialize() {
