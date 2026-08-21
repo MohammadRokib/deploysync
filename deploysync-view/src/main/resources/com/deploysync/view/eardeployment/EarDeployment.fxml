@@ -12,6 +12,12 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="profileCombo" editable="true" promptText="Select or type a new profile name"
+                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button text="Save Profile" onAction="#onSaveProfile"/>
+    </HBox>
+
     <GridPane hgap="10" vgap="12">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS"/>
