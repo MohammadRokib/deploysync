@@ -1,10 +1,14 @@
 package com.deploysync.view.weblogic;
 
 import com.deploysync.model.eardeployment.DeploymentResult;
+import com.deploysync.model.profile.EnvironmentProfile;
+import com.deploysync.model.profile.ProfileStore;
 import com.deploysync.model.weblogic.WeblogicConnection;
 import com.deploysync.model.weblogic.WeblogicService;
 import com.deploysync.view.shell.ShellModule;
+import com.deploysync.view.support.ActiveProfileHolder;
 import com.deploysync.view.support.Popups;
+import com.deploysync.view.support.ProfileSaves;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -19,8 +23,12 @@ public class WeblogicControlController implements ShellModule {
     private final WeblogicService weblogicService;
     private final SimpleBooleanProperty busy = new SimpleBooleanProperty(false);
 
-    @FXML
-    private TextField hostField;
+    private final ProfileStore profileStore;
+    private final ActiveProfileHolder activeProfileHolder;
+
+    @FXML private ComboBox<String> profileCombo;
+
+    @FXML private TextField hostField;
     @FXML private TextField portField;
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -35,8 +43,11 @@ public class WeblogicControlController implements ShellModule {
     @FXML private Label statusLabel;
     @FXML private ProgressBar progressBar;
 
-    public WeblogicControlController(WeblogicService weblogicService) {
+    public WeblogicControlController(WeblogicService weblogicService, ProfileStore profileStore,
+                                     ActiveProfileHolder activeProfileHolder) {
         this.weblogicService = weblogicService;
+        this.profileStore = profileStore;
+        this.activeProfileHolder = activeProfileHolder;
     }
 
     @Override public String displayName() { return "WebLogic Control"; }
@@ -58,6 +69,50 @@ public class WeblogicControlController implements ShellModule {
         startButton.disableProperty().bind(credentialsIncomplete.or(busy));
         updateButton.disableProperty().bind(credentialsIncomplete.or(busy));
         checkConnectionButton.disableProperty().bind(credentialsIncomplete.or(busy));
+
+        profileCombo.getItems().setAll(profileStore.list().stream().map(EnvironmentProfile::name).toList());
+        String active = activeProfileHolder.get();
+
+        if (!active.isBlank() && profileCombo.getItems().contains(active)) {
+            profileCombo.setValue(active);
+            profileStore.find(active).ifPresent(this::applyProfile);
+        }
+
+        profileCombo.valueProperty().addListener((obs, oldName, newNmae) -> {
+            activeProfileHolder.set(newNmae);
+            if (newNmae != null) {
+                profileStore.find(newNmae).ifPresent(this::applyProfile);
+            }
+        });
+    }
+
+    @FXML
+    private void onSaveProfile() {
+        String name = profileCombo.getValue();
+        if (name == null || name.isBlank()) {
+            Popups.showError("Name required", "Select or type a profile name before saving.");
+            return;
+        }
+
+        int port;
+        try {
+            port = Integer.parseInt(portField.getText().trim());
+        } catch (NumberFormatException e) {
+            Popups.showError("Invalid port", "Port must be a number");
+            return;
+        }
+
+        EnvironmentProfile base = profileStore.find(name).orElse(EnvironmentProfile.blank(name));
+        EnvironmentProfile merged = base.withName(name.trim()).withWeblogicFields(
+                hostField.getText().trim(), port, usernameField.getText().trim(),
+                appNameField.getText().trim(), targetField.getText().trim()
+        );
+
+        if (ProfileSaves.confirmAndSave(profileStore, merged)) {
+            activeProfileHolder.set(merged.name());
+            profileCombo.getItems().setAll(profileStore.list().stream().map(EnvironmentProfile::name).toList());
+            profileCombo.setValue(merged.name());
+        }
     }
 
     @FXML
@@ -137,5 +192,13 @@ public class WeblogicControlController implements ShellModule {
                 passwordField.getText(),
                 appNameField.getText().trim(),
                 targetField.getText().trim());
+    }
+
+    private void applyProfile(EnvironmentProfile profile) {
+        hostField.setText(profile.weblogicHost());
+        portField.setText(String.valueOf(profile.weblogicPort()));
+        usernameField.setText(profile.weblogicUsername());
+        appNameField.setText(profile.weblogicAppname());
+        targetField.setText(profile.weblogicTarget());
     }
 }
