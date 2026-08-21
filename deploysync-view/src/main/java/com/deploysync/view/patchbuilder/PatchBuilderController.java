@@ -7,6 +7,7 @@ import com.deploysync.model.patchbuilder.PatchBuilderService;
 import com.deploysync.view.shell.ShellModule;
 import com.deploysync.view.support.Popups;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -55,6 +56,7 @@ public class PatchBuilderController implements ShellModule {
 
     @Override public String displayName() { return "Patch Management"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/patchbuilder/PatchBuilder.fxml"; }
+    @Override public BooleanExpression busyProperty() { return extracting; }
 
     @FXML
     private void initialize() {

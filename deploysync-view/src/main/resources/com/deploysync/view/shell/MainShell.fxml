@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.SplitPane?>
 
+<?import javafx.scene.control.TabPane?>
 <SplitPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.deploysync.view.shell.MainShellController"
@@ -11,6 +11,6 @@
            dividerPositions="0.25">
     <items>
         <ListView fx:id="moduleList" minWidth="120" maxWidth="400"/>
-        <StackPane fx:id="contentPane" minWidth="300"/>
+        <TabPane fx:id="tabPane" minWidth="300"/>
     </items>
 </SplitPane>

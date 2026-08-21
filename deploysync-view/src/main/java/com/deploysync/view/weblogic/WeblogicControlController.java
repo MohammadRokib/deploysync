@@ -10,6 +10,7 @@ import com.deploysync.view.support.ActiveProfileHolder;
 import com.deploysync.view.support.Popups;
 import com.deploysync.view.support.ProfileSaves;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -52,6 +53,7 @@ public class WeblogicControlController implements ShellModule {
 
     @Override public String displayName() { return "WebLogic Control"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/weblogic/WeblogicControl.fxml"; }
+    @Override public BooleanExpression busyProperty() { return busy; }
 
     @FXML
     private void initialize() {

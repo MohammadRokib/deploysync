@@ -8,6 +8,7 @@ import com.deploysync.view.shell.ShellModule;
 import com.deploysync.view.support.ActiveProfileHolder;
 import com.deploysync.view.support.Popups;
 import com.deploysync.view.support.ProfileSaves;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class EarDeploymentController implements ShellModule {
 
     @Override public String displayName() { return "EAR Deployment"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/eardeployment/EarDeployment.fxml"; }
+    @Override public BooleanExpression busyProperty() { return deploying; }
 
     @FXML
     private void initialize() {
