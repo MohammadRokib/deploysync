@@ -21,7 +21,7 @@ public class WeblogicService {
     private static final Duration REDEPLOY_TIMEOUT = Duration.ofMinutes(5);
 
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(REDEPLOY_TIMEOUT)
+            .connectTimeout(DEFAULT_TIMEOUT)
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -71,7 +71,7 @@ public class WeblogicService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
-                .timeout(DEFAULT_TIMEOUT)
+                .timeout(REDEPLOY_TIMEOUT)
                 .header("Authorization", "Basic " + basicAuth)
                 .header("X-Requested-By", "automation")
                 .header("Accept", "application/json")
