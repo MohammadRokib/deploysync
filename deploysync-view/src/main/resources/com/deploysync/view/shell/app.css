@@ -1,0 +1,52 @@
+#moduleList {
+    -fx-background-color: -color-bg-subtle;
+}
+
+#moduleList .list-cell {
+    -fx-padding: 10 12 10 12;
+}
+
+#moduleList .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+#moduleList .scroll-bar:vertical {
+    -fx-opacity: 0;
+}
+
+#titleBar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: transparent transparent -color-border-default transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+#closeButton:hover {
+    -fx-background-color: #e81123;
+}
+
+#closeButton:hover FontIcon {
+    -fx-icon-color: white;
+}
+
+#statusBar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: -color-border-default transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.card {
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 20;
+}
+
+.card.edge-to-edge {
+    -fx-padding: 0;
+}
+
+.empty-state-label {
+    -fx-text-alignment: center;
+    -fx-padding: 24;
+}

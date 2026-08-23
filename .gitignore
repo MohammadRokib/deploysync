@@ -36,4 +36,6 @@ build/
 .DS_Store
 
 servers/
+docs/profiles.json
 docs/
+profiles.json

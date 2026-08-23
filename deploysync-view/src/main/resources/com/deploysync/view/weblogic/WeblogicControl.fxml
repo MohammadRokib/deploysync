@@ -7,43 +7,54 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.deploysync.view.weblogic.WeblogicControlController"
-      spacing="12" prefWidth="600" prefHeight="380">
+      spacing="16" prefWidth="640" prefHeight="460">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
 
-    <GridPane hgap="10" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints minWidth="130"/>
-            <ColumnConstraints hgrow="ALWAYS"/>
-        </columnConstraints>
+    <Label text="WebLogic Control" styleClass="title-3"/>
 
-        <Label text="Host / IP" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="hostField" promptText="e.g. 192.168.10.33" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <VBox spacing="16" styleClass="card">
+        <GridPane hgap="10" vgap="12">
+            <columnConstraints>
+                <ColumnConstraints minWidth="130"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
 
-        <Label text="Port" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="portField" promptText="e.g. 7001" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label text="Profile" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <HBox spacing="0" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <ComboBox fx:id="profileCombo" editable="true" promptText="Select or type a new profile name"
+                          styleClass="left-pill" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Save Profile" onAction="#onSaveProfile" styleClass="right-pill"/>
+            </HBox>
 
-        <Label text="Username" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="usernameField" promptText="e.g. weblogic" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label text="Host / IP" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="hostField" promptText="e.g. 192.168.10.33" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="Password" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="passwordField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <Label text="Port" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="portField" promptText="e.g. 7001" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-        <Label text="Application Name" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <TextField fx:id="appNameField" promptText="e.g. CapitaHyper" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            <Label text="Username" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="usernameField" promptText="e.g. weblogic" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-        <Label text="Target Server" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <TextField fx:id="targetField" promptText="e.g. AdminServer" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-    </GridPane>
+            <Label text="Password" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <PasswordField fx:id="passwordField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button fx:id="checkConnectionButton" text="Check Connection" onAction="#onCheckConnection"/>
-        <Button fx:id="stopButton" text="Stop" onAction="#onStop"/>
-        <Button fx:id="startButton" text="Start" onAction="#onStart"/>
-        <Button fx:id="updateButton" text="Update" onAction="#onUpdate"/>
-    </HBox>
+            <Label text="Application Name" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="appNameField" promptText="e.g. CapitaHyper" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-    <Label fx:id="statusLabel" wrapText="true"/>
-    <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+            <Label text="Target Server" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <TextField fx:id="targetField" promptText="e.g. AdminServer" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button fx:id="checkConnectionButton" text="Check Connection" onAction="#onCheckConnection" styleClass="button-outlined"/>
+            <Button fx:id="stopButton" text="Stop" onAction="#onStop" styleClass="button-outlined"/>
+            <Button fx:id="startButton" text="Start" onAction="#onStart" styleClass="success"/>
+            <Button fx:id="updateButton" text="Update" onAction="#onUpdate" styleClass="accent"/>
+        </HBox>
+
+        <Label fx:id="statusLabel" wrapText="true"/>
+        <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+    </VBox>
 </VBox>

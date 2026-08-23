@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 
-<SplitPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.deploysync.view.shell.MainShellController"
-           prefWidth="700" prefHeight="400"
-           dividerPositions="0.25">
-    <items>
-        <ListView fx:id="moduleList" minWidth="120" maxWidth="400"/>
-        <StackPane fx:id="contentPane" minWidth="300"/>
-    </items>
-</SplitPane>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.deploysync.view.shell.MainShellController"
+            prefWidth="960" prefHeight="600">
+    <top>
+        <HBox fx:id="titleBar" alignment="CENTER_LEFT" spacing="8">
+            <padding>
+                <Insets top="0" right="0" bottom="0" left="12"/>
+            </padding>
+            <ImageView fx:id="headerIcon" fitWidth="18" fitHeight="18" preserveRatio="true"/>
+            <Label text="DeploySync" styleClass="text-bold"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="minimizeButton" onAction="#onMinimize" styleClass="flat, button-icon"/>
+            <Button fx:id="maximizeButton" onAction="#onMaximizeRestore" styleClass="flat, button-icon"/>
+            <Button fx:id="closeButton" onAction="#onClose" styleClass="flat, button-icon"/>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.2">
+            <items>
+                <ListView fx:id="moduleList" minWidth="150" maxWidth="420"/>
+                <TabPane fx:id="tabPane" minWidth="300"/>
+            </items>
+        </SplitPane>
+    </center>
+    <bottom>
+        <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="12">
+            <padding>
+                <Insets top="6" right="14" bottom="6" left="14"/>
+            </padding>
+            <Hyperlink fx:id="versionLink" onAction="#onOpenRepo" styleClass="text-small"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="themeToggleButton" onAction="#onToggleTheme" styleClass="button-outlined, small"/>
+        </HBox>
+    </bottom>
+</BorderPane>

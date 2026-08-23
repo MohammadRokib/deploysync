@@ -2,13 +2,23 @@ package com.deploysync.view.eardeployment;
 
 import com.deploysync.model.eardeployment.DeploymentResult;
 import com.deploysync.model.eardeployment.EarDeploymentService;
+import com.deploysync.model.profile.EnvironmentProfile;
+import com.deploysync.model.profile.ProfileStore;
+import com.deploysync.view.shell.ShellModule;
+import com.deploysync.view.support.ActiveProfileHolder;
+import com.deploysync.view.support.Popups;
+import com.deploysync.view.support.ProfileSaves;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -16,19 +26,31 @@ import java.nio.file.Path;
 
 
 @Component
-public class EarDeploymentController {
+@Order(1)
+public class EarDeploymentController implements ShellModule {
     private final EarDeploymentService earDeploymentService;
+    private final ProfileStore profileStore;
+    private final ActiveProfileHolder activeProfileHolder;
     private final SimpleBooleanProperty deploying = new SimpleBooleanProperty(false);
 
+    @FXML private ComboBox<String> profileCombo;
     @FXML private TextField masterEarField;
     @FXML private TextField deploymentFolderField;
     @FXML private Button deployButton;
     @FXML private Label statusLabel;
     @FXML private ProgressBar progressBar;
 
-    public EarDeploymentController(EarDeploymentService earDeploymentService) {
+    public EarDeploymentController(EarDeploymentService earDeploymentService, ProfileStore profileStore,
+                                   ActiveProfileHolder activeProfileHolder) {
         this.earDeploymentService = earDeploymentService;
+        this.profileStore = profileStore;
+        this.activeProfileHolder = activeProfileHolder;
     }
+
+    @Override public String displayName() { return "EAR Deployment"; }
+    @Override public String fxmlResourcePath() { return "/com/deploysync/view/eardeployment/EarDeployment.fxml"; }
+    @Override public BooleanExpression busyProperty() { return deploying; }
+    @Override public Ikon icon() { return MaterialDesignP.PACKAGE_VARIANT_CLOSED; }
 
     @FXML
     private void initialize() {
@@ -40,6 +62,39 @@ public class EarDeploymentController {
 
         progressBar.setVisible(false);
         progressBar.setManaged(false);
+
+        profileCombo.getItems().setAll(profileStore.list().stream().map(EnvironmentProfile::name).toList());
+        String active = activeProfileHolder.get();
+
+        if (!active.isBlank() && profileCombo.getItems().contains(active)) {
+            profileCombo.setValue(active);
+            profileStore.find(active).ifPresent(profile -> masterEarField.setText(profile.masterEarPath()));
+        }
+
+        profileCombo.valueProperty().addListener((obs, oldName, newName) -> {
+            activeProfileHolder.set(newName);
+            if (newName != null) {
+                profileStore.find(newName).ifPresent(profile -> masterEarField.setText(profile.masterEarPath()));
+            }
+        });
+    }
+
+    @FXML
+    private void onSaveProfile() {
+        String name = profileCombo.getValue();
+        if (name == null || name.isBlank()) {
+            Popups.showError("Name required", "Select or type a profile name before saving.");
+            return;
+        }
+
+        EnvironmentProfile base = profileStore.find(name).orElse(EnvironmentProfile.blank(name));
+        EnvironmentProfile merged = base.withName(name.trim()).withMasterEarPath(masterEarField.getText().trim());
+
+        if (ProfileSaves.confirmAndSave(profileStore, merged)) {
+            activeProfileHolder.set(merged.name());
+            profileCombo.getItems().setAll(profileStore.list().stream().map(EnvironmentProfile::name).toList());
+            profileCombo.setValue(merged.name());
+        }
     }
 
     @FXML

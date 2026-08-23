@@ -1,6 +1,7 @@
 package com.deploysync.view.support;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 public final class Popups {
     private Popups() {}
@@ -11,6 +12,14 @@ public final class Popups {
         alert.setHeaderText(success ? successHeader : failureHeader);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public static boolean confirmOverwrite(String profileName) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Overwrite profile");
+        alert.setHeaderText("Profile '" + profileName + "' already exists");
+        alert.setContentText("Overwrite it with the current values?");
+        return alert.showAndWait().filter(button -> button == ButtonType.OK).isPresent();
     }
 
     public static void showError(String title, String message) {
