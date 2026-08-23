@@ -6,33 +6,49 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.deploysync.view.patchbuilder.PatchBuilderController"
-            prefWidth="750" prefHeight="500">
+            prefWidth="780" prefHeight="540">
     <top>
-        <VBox spacing="10">
+        <VBox spacing="16">
             <padding>
-                <Insets top="20" right="20" bottom="10" left="20"/>
+                <Insets top="24" right="24" bottom="16" left="24"/>
             </padding>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="extractionFolderField" promptText="Select extraction folder" HBox.hgrow="ALWAYS"/>
-                <Button text="Browse..." onAction="#onSelectExtractionFolder"/>
-            </HBox>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="masterFileField" promptText="Select master file" HBox.hgrow="ALWAYS"/>
-                <Button text="Browse..." onAction="#onSelectMasterFile"/>
-            </HBox>
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button fx:id="openButton" text="Open" onAction="#onOpen"/>
-                <Button fx:id="extractButton" text="Extract" onAction="#onExtract"/>
-            </HBox>
-            <Label fx:id="statusLabel" wrapText="true"/>
-            <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+
+            <Label text="Patch Management" styleClass="title-3"/>
+
+            <VBox spacing="12" styleClass="card">
+                <HBox spacing="0">
+                    <TextField fx:id="extractionFolderField" promptText="Select extraction folder" styleClass="left-pill" HBox.hgrow="ALWAYS"/>
+                    <Button text="Browse..." onAction="#onSelectExtractionFolder" styleClass="right-pill"/>
+                </HBox>
+                <HBox spacing="0">
+                    <TextField fx:id="masterFileField" promptText="Select master file" styleClass="left-pill" HBox.hgrow="ALWAYS"/>
+                    <Button text="Browse..." onAction="#onSelectMasterFile" styleClass="right-pill"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="openButton" text="Open" onAction="#onOpen" styleClass="button-outlined"/>
+                    <Button fx:id="extractButton" text="Extract" onAction="#onExtract" styleClass="accent"/>
+                </HBox>
+                <Label fx:id="statusLabel" wrapText="true"/>
+                <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+            </VBox>
         </VBox>
     </top>
     <center>
         <SplitPane dividerPositions="0.7">
+            <BorderPane.margin>
+                <Insets top="0" right="24" bottom="24" left="24"/>
+            </BorderPane.margin>
             <items>
-                <TreeView fx:id="archiveTree" minWidth="200" showRoot="true"/>
-                <ListView fx:id="selectedFilesList" minWidth="150"/>
+                <StackPane styleClass="card, edge-to-edge">
+                    <TreeView fx:id="archiveTree" minWidth="200" showRoot="true" styleClass="edge-to-edge"/>
+                    <Label fx:id="archiveTreePlaceholder" text="Select a master file and click Open to browse its contents"
+                           wrapText="true" textAlignment="CENTER" styleClass="text-muted, empty-state-label"/>
+                </StackPane>
+                <StackPane styleClass="card, edge-to-edge">
+                    <ListView fx:id="selectedFilesList" minWidth="150" styleClass="edge-to-edge"/>
+                    <Label fx:id="selectedFilesPlaceholder" text="Files you select from the archive for this patch will appear here"
+                           wrapText="true" textAlignment="CENTER" styleClass="text-muted, empty-state-label"/>
+                </StackPane>
             </items>
         </SplitPane>
     </center>
