@@ -37,3 +37,5 @@ build/
 
 servers/
 docs/profiles.json
+docs/
+profiles.json

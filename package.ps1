@@ -1,10 +1,14 @@
 $ErrorActionPreference = "Stop"
 
 $appModule  = "deploysync-app"
-$mainJar    = "deploysync-app-1.0-SNAPSHOT.jar"
 $mainClass  = "com.deploysync.app.Launcher"
 $appName    = "DeploySync"
-$appVersion = "1.1.1"
+
+Write-Host "==> Reading app version from pom.xml"
+$appVersion = (mvn -q -f pom.xml help:evaluate "-Dexpression=project.version" -DforceStdout).Trim()
+if ([string]::IsNullOrWhiteSpace($appVersion)) { throw "Failed to read project.version from pom.xml" }
+Write-Host "    version: $appVersion"
+$mainJar    = "$appModule-$appVersion.jar"
 
 $inputDir   = "$appModule\target\app-image-input"
 $runtimeDir = "$appModule\target\runtime"
@@ -82,6 +86,7 @@ Invoke-Traced -Exe "jpackage" -ExeArgs @(
     "--main-jar", $mainJar,
     "--main-class", $mainClass,
     "--runtime-image", $runtimeDir,
+    "--icon", "images\icon.ico",
     "--dest", $distDir
 )
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed" }
