@@ -13,14 +13,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignW;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -32,6 +38,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Component
+@Order(4)
 public class PatchBuilderController implements ShellModule {
     private final PatchBuilderService patchBuilderService;
     private final SimpleBooleanProperty extracting = new SimpleBooleanProperty(false);
@@ -56,6 +63,7 @@ public class PatchBuilderController implements ShellModule {
 
     @Override public String displayName() { return "Patch Management"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/patchbuilder/PatchBuilder.fxml"; }
+    @Override public Ikon icon() { return MaterialDesignW.WRENCH; }
     @Override public BooleanExpression busyProperty() { return extracting; }
 
     @FXML

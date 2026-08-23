@@ -13,9 +13,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -23,6 +26,7 @@ import java.nio.file.Path;
 
 
 @Component
+@Order(1)
 public class EarDeploymentController implements ShellModule {
     private final EarDeploymentService earDeploymentService;
     private final ProfileStore profileStore;
@@ -46,6 +50,7 @@ public class EarDeploymentController implements ShellModule {
     @Override public String displayName() { return "EAR Deployment"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/eardeployment/EarDeployment.fxml"; }
     @Override public BooleanExpression busyProperty() { return deploying; }
+    @Override public Ikon icon() { return MaterialDesignP.PACKAGE_VARIANT_CLOSED; }
 
     @FXML
     private void initialize() {

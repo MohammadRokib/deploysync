@@ -7,17 +7,21 @@ import com.deploysync.view.support.ActiveProfileHolder;
 import com.deploysync.view.support.Popups;
 import com.deploysync.view.support.ProfileSaves;
 import javafx.fxml.FXML;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 
 @Component
+@Order(3)
 public class ProfileController implements ShellModule {
     private final ProfileStore profileStore;
     private final ActiveProfileHolder activeProfileHolder;
@@ -40,6 +44,7 @@ public class ProfileController implements ShellModule {
 
     @Override public String displayName() { return "Configuration"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/profile/Profile.fxml"; }
+    @Override public Ikon icon() { return MaterialDesignC.COG_OUTLINE; }
 
     @FXML
     private void initialize() {

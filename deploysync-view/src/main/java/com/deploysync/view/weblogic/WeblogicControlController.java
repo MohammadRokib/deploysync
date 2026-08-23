@@ -15,11 +15,15 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignS;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
 @Component
+@Order(2)
 public class WeblogicControlController implements ShellModule {
     private final WeblogicService weblogicService;
     private final SimpleBooleanProperty busy = new SimpleBooleanProperty(false);
@@ -53,6 +57,7 @@ public class WeblogicControlController implements ShellModule {
 
     @Override public String displayName() { return "WebLogic Control"; }
     @Override public String fxmlResourcePath() { return "/com/deploysync/view/weblogic/WeblogicControl.fxml"; }
+    @Override public Ikon icon() { return MaterialDesignS.SERVER; }
     @Override public BooleanExpression busyProperty() { return busy; }
 
     @FXML
