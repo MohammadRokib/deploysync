@@ -7,31 +7,42 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.deploysync.view.eardeployment.EarDeploymentController"
-      spacing="12" prefWidth="600" prefHeight="220">
+      spacing="16" prefWidth="640" prefHeight="320">
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
 
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <ComboBox fx:id="profileCombo" editable="true" promptText="Select or type a new profile name"
-                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-        <Button text="Save Profile" onAction="#onSaveProfile"/>
-    </HBox>
+    <Label text="EAR Deployment" styleClass="title-3"/>
 
-    <GridPane hgap="10" vgap="12">
-        <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS"/>
-            <ColumnConstraints minWidth="90"/>
-        </columnConstraints>
+    <VBox spacing="16" styleClass="card">
+        <GridPane hgap="10" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints minWidth="170"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
 
-        <TextField fx:id="masterEarField" promptText="Master .ear file" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <Button text="Browse…" onAction="#onBrowseMasterEar" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label text="Profile" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <HBox spacing="0" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                <ComboBox fx:id="profileCombo" editable="true" promptText="Select or type a new profile name"
+                          styleClass="left-pill" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Save Profile" onAction="#onSaveProfile" styleClass="right-pill"/>
+            </HBox>
 
-        <TextField fx:id="deploymentFolderField" promptText="New deployment files folder" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <Button text="Browse…" onAction="#onBrowseDeploymentFolder" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-    </GridPane>
+            <Label text="Master .ear file" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <HBox spacing="0" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <TextField fx:id="masterEarField" styleClass="left-pill" HBox.hgrow="ALWAYS"/>
+                <Button text="Browse…" onAction="#onBrowseMasterEar" styleClass="right-pill"/>
+            </HBox>
 
-    <Button fx:id="deployButton" text="Deploy" onAction="#onDeploy"/>
-    <Label fx:id="statusLabel" wrapText="true"/>
-    <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false" />
+            <Label text="New deployment files folder" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <HBox spacing="0" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                <TextField fx:id="deploymentFolderField" styleClass="left-pill" HBox.hgrow="ALWAYS"/>
+                <Button text="Browse…" onAction="#onBrowseDeploymentFolder" styleClass="right-pill"/>
+            </HBox>
+        </GridPane>
+
+        <Button fx:id="deployButton" text="Deploy" onAction="#onDeploy" styleClass="accent"/>
+        <Label fx:id="statusLabel" wrapText="true"/>
+        <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" visible="false" managed="false"/>
+    </VBox>
 </VBox>

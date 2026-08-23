@@ -56,6 +56,8 @@ public class PatchBuilderController implements ShellModule {
 
     @FXML private TreeView<ArchiveNode> archiveTree;
     @FXML private ListView<ManifestEntry> selectedFilesList;
+    @FXML private Label archiveTreePlaceholder;
+    @FXML private Label selectedFilesPlaceholder;
 
     public PatchBuilderController(PatchBuilderService patchBuilderService) {
         this.patchBuilderService = patchBuilderService;
@@ -83,6 +85,9 @@ public class PatchBuilderController implements ShellModule {
 
         selectedFilesList.setItems(selectedFiles);
         selectedFilesList.setCellFactory(list -> new SelectedFileCell());
+
+        archiveTreePlaceholder.visibleProperty().bind(archiveTree.rootProperty().isNull());
+        selectedFilesPlaceholder.visibleProperty().bind(Bindings.isEmpty(selectedFiles));
 
         archiveTree.setCellFactory(tree -> {
             TreeCell<ArchiveNode> cell = new TreeCell<>() {
@@ -252,11 +257,14 @@ public class PatchBuilderController implements ShellModule {
     }
 
     private final class SelectedFileCell extends ListCell<ManifestEntry> {
-        private final Button removeButton = new Button("X");
+        private final Button removeButton = new Button();
         private final Label nameLabel = new Label();
         private final HBox root = new HBox(8, removeButton, nameLabel);
 
         SelectedFileCell() {
+            root.setAlignment(Pos.CENTER_LEFT);
+            removeButton.setGraphic(new FontIcon(MaterialDesignC.CLOSE));
+            removeButton.getStyleClass().addAll("flat", "button-icon", "small");
             removeButton.setOnAction(e -> {
                 ManifestEntry item = getItem();
                 if (item != null) {
