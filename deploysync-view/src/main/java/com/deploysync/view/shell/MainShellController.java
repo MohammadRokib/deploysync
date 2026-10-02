@@ -168,6 +168,13 @@ public class MainShellController {
 
         try {
             Parent view = fxmlLoader.load(module.fxmlResourcePath());
+            if (view instanceof javafx.scene.layout.VBox) {
+                javafx.scene.control.ScrollPane sp = new javafx.scene.control.ScrollPane(view);
+                sp.setFitToWidth(true);
+                sp.getStyleClass().add("edge-to-edge");
+                view = sp;
+            }
+
             Tab tab = new Tab(moduleName, view);
             tab.setUserData(moduleName);
             tab.setGraphic(new FontIcon(module.icon()));
