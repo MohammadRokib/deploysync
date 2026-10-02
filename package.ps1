@@ -4,15 +4,28 @@ $appModule  = "deploysync-app"
 $mainClass  = "com.deploysync.app.Launcher"
 $appName    = "DeploySync"
 
+# Detect OS for naming and icons
+if ($IsWindows) {
+    $osSuffix = "win64"
+    $iconArgs = @("--icon", "images/icon.ico")
+} elseif ($IsMacOS) {
+    $osSuffix = "mac64"
+    # macOS requires .icns, omitting for now unless you create one
+    $iconArgs = @()
+} else {
+    $osSuffix = "linux64"
+    $iconArgs = @("--icon", "images/app-icon-256.png")
+}
+
 Write-Host "==> Reading app version from pom.xml"
 $appVersion = (mvn -q -f pom.xml help:evaluate "-Dexpression=project.version" -DforceStdout).Trim()
 if ([string]::IsNullOrWhiteSpace($appVersion)) { throw "Failed to read project.version from pom.xml" }
 Write-Host "    version: $appVersion"
 $mainJar    = "$appModule-$appVersion.jar"
 
-$inputDir   = "$appModule\target\app-image-input"
-$runtimeDir = "$appModule\target\runtime"
-$distDir    = "$appModule\target\dist"
+$inputDir   = "$appModule/target/app-image-input"
+$runtimeDir = "$appModule/target/runtime"
+$distDir    = "$appModule/target/dist"
 
 function Remove-DirectoryRobust($path) {
     # Freshly written .exe files are briefly locked by Windows Defender's real-time
@@ -49,8 +62,8 @@ Invoke-Traced -Exe "mvn" -ExeArgs @("clean", "install")
 if ($LASTEXITCODE -ne 0) { throw "Maven build failed" }
 
 Write-Host "==> Detecting required JDK modules via jdeps"
-$jars = (Get-ChildItem "$inputDir\*.jar").FullName
-$cp = $jars -join ";"
+$jars = (Get-ChildItem "$inputDir/*.jar").FullName
+$cp = $jars -join (([IO.Path]::PathSeparator).ToString())
 $jdepsArgs = @("--multi-release", "25", "--ignore-missing-deps", "--print-module-deps", "--class-path", $cp) + $jars
 $detected = (Invoke-Traced -Exe "jdeps" -ExeArgs $jdepsArgs 2>$null | Select-Object -Last 1).Trim()
 if ([string]::IsNullOrWhiteSpace($detected)) { throw "jdeps failed to compute module list" }
@@ -78,7 +91,7 @@ if ($LASTEXITCODE -ne 0) { throw "jlink failed" }
 
 Write-Host "==> jpackage"
 Remove-DirectoryRobust $distDir
-Invoke-Traced -Exe "jpackage" -ExeArgs @(
+$jpackageArgs = @(
     "--type", "app-image",
     "--name", $appName,
     "--app-version", $appVersion,
@@ -86,16 +99,17 @@ Invoke-Traced -Exe "jpackage" -ExeArgs @(
     "--main-jar", $mainJar,
     "--main-class", $mainClass,
     "--runtime-image", $runtimeDir,
-    "--icon", "images\icon.ico",
     "--dest", $distDir
-)
+) + $iconArgs
+
+Invoke-Traced -Exe "jpackage" -ExeArgs $jpackageArgs
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed" }
 
-Write-Host "==> Done: $distDir\$appName\$appName.exe"
-
 Write-Host "==> Creating release zip"
-$zipPath = "$distDir\$appName-v$appVersion-win64.zip"
-$zipSource = "$distDir\$appName"
+$zipPath = "$distDir/$appName-v$appVersion-$osSuffix.zip"
+$zipSource = "$distDir/$appName"
+if ($IsMacOS) { $zipSource += ".app" } # macOS outputs a .app bundle
+
 Write-Host "Compress-Archive -Path $zipSource -DestinationPath $zipPath -Force" -ForegroundColor Green
 Compress-Archive -Path $zipSource -DestinationPath $zipPath -Force
 
